@@ -12,9 +12,9 @@ function AntHill(host, port) {
   this.workers = [];
   this.callbacks = {};
   this.workerState = {
-    ERROR: -1,
-    READY: 0,
-    BUSY: 1
+    ERROR: 'ERROR',
+    READY: 'READY',
+    BUSY: 'BUSY'
   };
 }
 
@@ -40,12 +40,12 @@ AntHill.prototype = {
           case 'COMPLETE':
             console.log('Worker state : COMPLETE');
             worker.state = self.workerState.READY;
-            self.callbacks[jsonObj.jobId](null, jsonObj);
+            self.callbacks[messageObj.jobId](null, messageObj);
           break;
           case 'ERROR':
             console.log('Worker state : ERROR');
             worker.state = self.workerState.ERROR;
-            self.callbacks[jsonObj.jobId](jsonObj.error, null);
+            self.callbacks[messageObj.jobId](messageObj.error, null);
           break;
         }
       });
