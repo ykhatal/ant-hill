@@ -89,16 +89,16 @@ AntHill.prototype = {
 
   removeWorker: function(socket) {
     _.remove(this.workers, function(element) {
+      console.log('Worker ' + element.id + ' disconnected');
       return element.socket == socket;
     });
-    console.log('length :', this.workers.length);
   },
 
   addTask: function(taskType, task, priority, delay, callback) {
     var self = this;
     var job = tasksQueue.create(taskType, {
-        task: task,
-        callback: callback
+        'task': task,
+        'callback': callback
     }).attempts(0).priority(priority).delay(delay).save();
     job.on('enqueue', function() {
       console.log('Job', job.id, 'enqueued', job.data.task);
