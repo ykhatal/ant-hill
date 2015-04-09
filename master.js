@@ -5,38 +5,6 @@ var net = require('net'),
     _ = require('lodash'),
     tasksQueue = kue.createQueue();
 
-var protocol = [
-  {
-    type: 'READY',
-    cb: function(jsonObj, worker, self) {
-      console.log('Worker READY');
-      worker.state = self.workerState.READY;
-    }
-  },
-  {
-    type: 'BUSY',
-    cb: function(jsonObj, worker, self) {
-      console.log('Worker BUSY');
-      worker.state = self.workerState.BUSY;
-    }
-  },
-  {
-    type: 'COMPLETE',
-    cb: function(jsonObj, worker, self) {
-      console.log('Worker COMPLETE');
-      worker.state = self.workerState.READY;
-      self.callbacks[jsonObj.jobId](jsonObj);
-    }
-  },
-  {
-    type: 'ERROR',
-    cb: function(jsonObj, worker, self) {
-      console.log('Worker ERROR');
-      worker.state = self.workerState.ERROR;
-    }
-  }
-];
-
 // Constructor
 function AntHill(host, port) {
   this.host = host;
@@ -54,19 +22,32 @@ AntHill.prototype = {
 
   createServer: function() {
     var self = this;
-    console.log('Server listening on ' + this.host + ':' + this.port);
+    console.log('Server listening on ' + self.host + ':' + self.port);
     net.createServer(function(socket) {
       // Add connected worker
       var worker = self.addWorker(socket);
       // Called on data received
       socket.on('data', function(message) {
         var messageObj = JSON.parse(message);
-        for (var i = 0; i < protocol.length; ++i) {
-          switch(messageObj.type) {
-            case protocol[i].type:
-              protocol[i].cb(messageObj, worker, self);
-            break;
-          }
+        switch(messageObj.status) {
+          case 'READY':
+            console.log('Worker state : READY');
+            worker.state = self.workerState.READY;
+          break;
+          case 'BUSY':
+            console.log('Worker state : BUSY');
+            worker.state = self.workerState.BUSY;
+          break;
+          case 'COMPLETE':
+            console.log('Worker state : COMPLETE');
+            worker.state = self.workerState.READY;
+            self.callbacks[jsonObj.jobId](null, jsonObj);
+          break;
+          case 'ERROR':
+            console.log('Worker state : ERROR');
+            worker.state = self.workerState.ERROR;
+            self.callbacks[jsonObj.jobId](jsonObj.error, null);
+          break;
         }
       });
       // Called on worker disconnection
