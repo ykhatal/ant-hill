@@ -65,9 +65,9 @@ AntHill.prototype = {
   },
   // Remove disconnected workerAnt
   removeworkerAnt: function(socket) {
-    _.remove(this.workerAnts, function(element) {
-      console.log('workerAnt ' + element.id + ' disconnected');
-      return element.socket == socket;
+    _.remove(this.workerAnts, function(workerAnt) {
+      console.log('workerAnt ' + workerAnt.id + ' disconnected');
+      return workerAnt.socket == socket;
     });
   },
   // Add task to queue
@@ -99,7 +99,7 @@ AntHill.prototype = {
     return _.where(this.workerAnts, { 'id': id });
   },
   // Set workerAnt state
-  setWorkerAntState: function (ant, state) {
+  setWorkerAntState: function (workerAnt, state) {
     _.where(this.workerAnts, { 'id': workerAnt.id })[0].state = state;
     console.log('workerAnt state : ' + state);
   },
