@@ -19,12 +19,11 @@ function AntHill(host, port) {
 }
 
 AntHill.prototype = {
-
+  // Create server and listen to port
   createServer: function() {
     var self = this;
     console.log('Server listening on ' + self.host + ':' + self.port);
     net.createServer(function(socket) {
-      // Add connected worker
       var worker = self.addWorker(socket);
       // Called on data received
       socket.on('data', function(message) {
@@ -56,7 +55,7 @@ AntHill.prototype = {
       });
     }).listen(this.port, this.host);
   },
-
+  // Add connected worker
   addWorker: function(socket) {
     var worker = {
       'id': this.workers.length + 1,
@@ -67,14 +66,14 @@ AntHill.prototype = {
     console.log('Worker ' + worker.id + ' connected');
     return worker;
   },
-
+  // Remove disconnected worker
   removeWorker: function(socket) {
     _.remove(this.workers, function(element) {
       console.log('Worker ' + element.id + ' disconnected');
       return element.socket == socket;
     });
   },
-
+  // Add task to queue
   addTask: function(taskType, task, priority, delay, callback) {
     var self = this;
     var job = tasksQueue.create(taskType, {
