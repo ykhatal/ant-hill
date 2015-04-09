@@ -38,11 +38,11 @@ AntHill.prototype = {
           break;
           case 'COMPLETE':
             self.setWorkerAntState(workerAnt, self.antStates.READY);
-            _.where(self.callbacks, { 'taskId': parseInt(messageObj.taskId) })[0].callback(null, messageObj);
+            _.first(_.where(self.callbacks, { 'taskId': parseInt(messageObj.taskId) })).success(messageObj);
           break;
           case 'ERROR':
             self.setWorkerAntState(workerAnt, self.antStates.ERROR);
-            _.where(self.callbacks, { 'taskId': parseInt(messageObj.taskId) })[0].callback(messageObj.error, null);
+            _.first(_.where(self.callbacks, { 'taskId': parseInt(messageObj.taskId) })).error(messageObj);
           break;
         }
       });
@@ -79,24 +79,24 @@ AntHill.prototype = {
     return _.where(this.workerAnts, { 'id': id });
   },
   // Add task to queue
-  addTask: function(taskType, task, priority, delay, callback) {
+  addTask: function(task) {
     var self = this;
-    var task = tasksQueue.create(taskType, {
-        'task': task
-    }).attempts(0).priority(priority).delay(delay).save();
-    task.on('enqueue', function() {
-      console.log('task', task.id, 'enqueued', task.data.task);
+    var job = tasksQueue.create(task.type, {
+        'task': task.data
+    }).attempts(task.attempt).priority(task.priority).delay(task.delay).save();
+    job.on('enqueue', function() {
+      console.log('task', job.id, 'enqueued', job.data.task);
       self.callbacks.push({
-        'taskId': task.id,
-        'callback': callback
+        'taskId': job.id,
+        'success': task.success,
+        'error': task.error
       });
     });
-    task.on('complete', function() {
-      console.log('task', task.id, 'completed', task.data.task);
+    job.on('complete', function() {
+      console.log('task', job.id, 'completed', job.data.task);
     });
-    task.on('failed', function() {
-      console.log('task', task.id, 'failed', task.data.task);
-      self.setTaskState(task, 'inactive');
+    job.on('failed', function() {
+      console.log('task', job.id, 'failed', job.data.task);
     });
   },
   // Set workerAnt state
