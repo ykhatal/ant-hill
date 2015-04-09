@@ -49,64 +49,66 @@ function AntHill(host, port) {
   };
 }
 
-AntHill.prototype.createServer = function() {
-	var self = this;
-	console.log('Server listening on ' + self.host + ':' + self.port);
-	net.createServer(function(socket) {
-		// Add connected worker
-		var worker = {
-        id: self.workers.length + 1,
-        status: self.workerState.READY,
-        socket: socket
+AntHill.prototype = {
+
+  createServer: function() {
+    var self = this;
+    console.log('Server listening on ' + self.host + ':' + self.port);
+    net.createServer(function(socket) {
+      // Add connected worker
+      var worker = {
+          id: self.workers.length + 1,
+          status: self.workerState.READY,
+          socket: socket
+      }
+      console.log('Worker ' + worker.id + ' connected');
+      self.addWorker(worker);
+      // Called on data received
+      socket.on('data', function(message) {
+        var messageObj = JSON.parse(message);
+        for (var i = 0; i < protocol.length; ++i) {
+          switch(messageObj.type) {
+            case protocol[i].type:
+              protocol[i].cb(messageObj, worker, self);
+            break;
+          }
+        }
+      });
+      // Called on worker disconnection
+      socket.on('close', function() {
+        self.removeWorker(worker);
+      });
+    }).listen(this.port, this.host);
+  },
+
+  addWorker: function(worker) {
+    this.workers.push(worker);
+  },
+
+  removeWorker: function(worker) {
+    var ind = this.workers.indexOf(worker);
+    if (ind != -1) {
+      this.workers.splice(ind, 1);
     }
-		console.log('Worker ' + worker.id + ' connected');
-    self.addWorker(worker);
-		// Called on data received
-		socket.on('data', function(message) {
-			var messageObj = JSON.parse(message);
-			for (var i = 0; i < protocol.length; ++i) {
-				switch(messageObj.type) {
-					case protocol[i].type:
-						protocol[i].cb(messageObj, worker, self);
-					break;
-				}
-			}
-  	});
-  	// Called on worker disconnection
-		socket.on('close', function() {
-			self.removeWorker(worker);
-  	});
-	}).listen(this.port, this.host);
-};
+  },
 
-// class methods
-AntHill.prototype.addWorker = function(worker) {
-	this.workers.push(worker);
-};
-
-AntHill.prototype.removeWorker = function(worker) {
-	var ind = this.workers.indexOf(worker);
-	if (ind != -1) {
-    this.workers.splice(ind, 1);
+  addTask: function(taskType, task, priority, delay, callback) {
+    var self = this;
+    var job = tasksQueue.create(taskType, {
+        task: task,
+        callback: callback
+    }).attempts(0).priority(priority).delay(delay).save();
+    job.on('enqueue', function() {
+    	console.log('Job', job.id, 'enqueued', job.data.task);
+      self.callbacks[job.id] = callback;
+    });
+    job.on('complete', function() {
+      console.log('Job', job.id, 'completed', job.data.task);
+    });
+    job.on('failed', function() {
+      console.log('Job', job.id, 'failed', job.data.task);
+    });
   }
-};
-
-AntHill.prototype.addTask = function(taskType, task, priority, delay, callback) {
-  var self = this;
-  var job = tasksQueue.create(taskType, {
-      task: task,
-      callback: callback
-  }).attempts(0).priority(priority).delay(delay).save();
-  job.on('enqueue', function() {
-  	console.log('Job', job.id, 'enqueued', job.data.task);
-    self.callbacks[job.id] = callback;
-  });
-  job.on('complete', function() {
-    console.log('Job', job.id, 'completed', job.data.task);
-  });
-  job.on('failed', function() {
-    console.log('Job', job.id, 'failed', job.data.task);
-  });
 };
 
 // export the class
