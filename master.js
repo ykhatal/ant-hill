@@ -54,7 +54,7 @@ AntHill.prototype = {
 
   createServer: function() {
     var self = this;
-    console.log('Server listening on ' + self.host + ':' + self.port);
+    console.log('Server listening on ' + this.host + ':' + this.port);
     net.createServer(function(socket) {
       // Add connected worker
       var worker = self.addWorker(socket);
