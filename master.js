@@ -10,7 +10,7 @@ function AntHill(host, port) {
   this.host = host;
   this.port = port;
   this.workers = [];
-  this.callbacks = {};
+  this.callbacks = [];
   this.workerStates = {
     ERROR: 'ERROR',
     READY: 'READY',
@@ -40,12 +40,12 @@ AntHill.prototype = {
           case 'COMPLETE':
             console.log('Worker state : COMPLETE');
             worker.state = self.workerStates.READY;
-            self.callbacks[messageObj.jobId](null, messageObj);
+            _.where(self.callbacks, { 'jobId': parseInt(messageObj.jobId) })[0].callback(null, messageObj);
           break;
           case 'ERROR':
             console.log('Worker state : ERROR');
             worker.state = self.workerStates.ERROR;
-            self.callbacks[messageObj.jobId](messageObj.error, null);
+            _.where(self.callbacks, { 'jobId': parseInt(messageObj.jobId) })[0].callback(messageObj.error, null);
           break;
         }
       });
@@ -77,12 +77,14 @@ AntHill.prototype = {
   addTask: function(taskType, task, priority, delay, callback) {
     var self = this;
     var job = tasksQueue.create(taskType, {
-        'task': task,
-        'callback': callback
+        'task': task
     }).attempts(0).priority(priority).delay(delay).save();
     job.on('enqueue', function() {
       console.log('Job', job.id, 'enqueued', job.data.task);
-      self.callbacks[job.id] = callback;
+      self.callbacks.push({
+        'jobId': job.id,
+        'callback': callback
+      });
     });
     job.on('complete', function() {
       console.log('Job', job.id, 'completed', job.data.task);
