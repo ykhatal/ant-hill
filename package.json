@@ -1,0 +1,29 @@
+{
+  "name": "AntHill",
+  "description": "An easy way to send JSON over TCP using sockets.",
+  "author": {
+    "name": "Yacine Khatal",
+    "email": "khatal.yacine@gmail.com"
+  },
+  "version": "0.1.0",
+  "private": true,
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/ky23/ant-hill.git"
+  },
+  "bugs" : {
+    "url" : "https://github.com/ky23/ant-hill/issues"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "dependencies": {
+    "lodash": "~3.6.0",
+    "kue": "~0.8.12"
+  }
+}
+
+
