@@ -96,7 +96,7 @@ AntHill.prototype = {
     });
     task.on('failed', function() {
       console.log('task', task.id, 'failed', task.data.task);
-      self.setTaskStatus(task, 'inactive');
+      self.setTaskState(task, 'inactive');
     });
   },
   // Set workerAnt state
@@ -104,7 +104,8 @@ AntHill.prototype = {
     _.where(this.workerAnts, { 'id': workerAnt.id })[0].state = state;
     console.log('workerAnt state : ' + state);
   },
-  setTaskStatus: function(task, taskState) {
+  // Set task state
+  setTaskState: function(task, taskState) {
     task.state(taskState).save();
     console.log('Task ' + task.id + ' state changed  to : ' + taskState);
   }
