@@ -24,52 +24,52 @@ AntHill.prototype = {
     var self = this;
     console.log('Server listening on ' + this.host + ':' + self.port);
     net.createServer(function(socket) {
-      var worker = self.addWorker(socket);
+      var workerAnt = self.addworkerAnt(socket);
       // Called on data received
       socket.on('data', function(message) {
         var messageObj = JSON.parse(message);
         switch(messageObj.state) {
           case 'READY':
-            console.log('Worker state : READY');
-            self.setWorkerAntState(worker, self.antStates.READY);
+            console.log('workerAnt state : READY');
+            self.setWorkerAntState(workerAnt, self.antStates.READY);
           break;
           case 'BUSY':
-            console.log('Worker state : BUSY');
-            self.setWorkerAntState(worker, self.antStates.BUSY);
+            console.log('workerAnt state : BUSY');
+            self.setWorkerAntState(workerAnt, self.antStates.BUSY);
           break;
           case 'COMPLETE':
-            console.log('Worker state : COMPLETE');
-            self.setWorkerAntState(worker, self.antStates.READY);
+            console.log('workerAnt state : COMPLETE');
+            self.setWorkerAntState(workerAnt, self.antStates.READY);
             _.where(self.callbacks, { 'jobId': parseInt(messageObj.jobId) })[0].callback(null, messageObj);
           break;
           case 'ERROR':
-            console.log('Worker state : ERROR');
-            self.setWorkerAntState(worker, self.antStates.ERROR);
+            console.log('workerAnt state : ERROR');
+            self.setWorkerAntState(workerAnt, self.antStates.ERROR);
             _.where(self.callbacks, { 'jobId': parseInt(messageObj.jobId) })[0].callback(messageObj.error, null);
           break;
         }
       });
-      // Called on worker disconnection
+      // Called on workerAnt disconnection
       socket.on('close', function() {
-        self.removeWorker(socket);
+        self.removeworkerAnt(socket);
       });
     }).listen(this.port, this.host);
   },
-  // Add connected worker
-  addWorker: function(socket) {
-    var worker = {
+  // Add connected workerAnt
+  addworkerAnt: function(socket) {
+    var workerAnt = {
       'id': this.workerAnts.length + 1,
       'state': this.antStates.READY,
       'socket': socket
     };
-    this.workerAnts.push(worker);
-    console.log('Worker ' + worker.id + ' connected');
-    return worker;
+    this.workerAnts.push(workerAnt);
+    console.log('workerAnt ' + workerAnt.id + ' connected');
+    return workerAnt;
   },
-  // Remove disconnected worker
-  removeWorker: function(socket) {
+  // Remove disconnected workerAnt
+  removeworkerAnt: function(socket) {
     _.remove(this.workerAnts, function(element) {
-      console.log('Worker ' + element.id + ' disconnected');
+      console.log('workerAnt ' + element.id + ' disconnected');
       return element.socket == socket;
     });
   },
