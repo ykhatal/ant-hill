@@ -2,7 +2,8 @@
 // Required modules
 var net = require('net'),
     kue = require('kue'),
-		tasksQueue = kue.createQueue();
+    _ = require('lodash'),
+    tasksQueue = kue.createQueue();
 
 var protocol = [
   {
@@ -43,7 +44,7 @@ function AntHill(host, port) {
   this.workers = [];
   this.callbacks = {};
   this.workerState = {
-  	ERROR: -1,
+    ERROR: -1,
     READY: 0,
     BUSY: 1
   };
@@ -56,13 +57,7 @@ AntHill.prototype = {
     console.log('Server listening on ' + self.host + ':' + self.port);
     net.createServer(function(socket) {
       // Add connected worker
-      var worker = {
-          id: self.workers.length + 1,
-          status: self.workerState.READY,
-          socket: socket
-      }
-      console.log('Worker ' + worker.id + ' connected');
-      self.addWorker(worker);
+      var worker = self.addWorker(socket);
       // Called on data received
       socket.on('data', function(message) {
         var messageObj = JSON.parse(message);
@@ -76,20 +71,27 @@ AntHill.prototype = {
       });
       // Called on worker disconnection
       socket.on('close', function() {
-        self.removeWorker(worker);
+        self.removeWorker(socket);
       });
     }).listen(this.port, this.host);
   },
 
-  addWorker: function(worker) {
+  addWorker: function(socket) {
+    var worker = {
+      'id': this.workers.length + 1,
+      'status': this.workerState.READY,
+      'socket': socket
+    };
     this.workers.push(worker);
+    console.log('Worker ' + worker.id + ' connected');
+    return worker;
   },
 
-  removeWorker: function(worker) {
-    var ind = this.workers.indexOf(worker);
-    if (ind != -1) {
-      this.workers.splice(ind, 1);
-    }
+  removeWorker: function(socket) {
+    _.remove(this.workers, function(element) {
+      return element.socket == socket;
+    });
+    console.log('length :', this.workers.length);
   },
 
   addTask: function(taskType, task, priority, delay, callback) {
@@ -99,7 +101,7 @@ AntHill.prototype = {
         callback: callback
     }).attempts(0).priority(priority).delay(delay).save();
     job.on('enqueue', function() {
-    	console.log('Job', job.id, 'enqueued', job.data.task);
+      console.log('Job', job.id, 'enqueued', job.data.task);
       self.callbacks[job.id] = callback;
     });
     job.on('complete', function() {
