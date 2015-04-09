@@ -88,6 +88,7 @@ AntHill.prototype = {
     });
     task.on('failed', function() {
       console.log('task', task.id, 'failed', task.data.task);
+      self.setTaskStatus(task, 'inactive');
     });
   },
   // Get all workerAnts with status
@@ -103,12 +104,9 @@ AntHill.prototype = {
     _.where(this.workerAnts, { 'id': workerAnt.id })[0].state = state;
     console.log('workerAnt state : ' + state);
   },
-  setTaskStatus: function(task, taskType, taskStatus) {
-    kue.Job.rangeByType (taskType, task.state, task.id, task.id, 'asc', function (err, selectedTasks) {
-      selectedTasks.forEach(function (task) {
-          task.state(taskStatus).save();
-      });
-    });
+  setTaskStatus: function(task, taskState) {
+    task.state(taskState).save();
+    console.log('Task ' + task.id + ' state changed  to : ' + taskState);
   }
 };
 
