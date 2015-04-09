@@ -28,7 +28,7 @@ AntHill.prototype = {
       // Called on data received
       socket.on('data', function(message) {
         var messageObj = JSON.parse(message);
-        switch(messageObj.status) {
+        switch(messageObj.state) {
           case 'READY':
             console.log('Worker state : READY');
             worker.state = self.workerState.READY;
@@ -59,7 +59,7 @@ AntHill.prototype = {
   addWorker: function(socket) {
     var worker = {
       'id': this.workers.length + 1,
-      'status': this.workerState.READY,
+      'state': this.workerState.READY,
       'socket': socket
     };
     this.workers.push(worker);
