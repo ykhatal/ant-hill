@@ -96,7 +96,11 @@ AntHill.prototype = {
   // Get all workerAnts with status
   getWorkerAntsByState: function(state) {
     return _.where(this.workerAnts, { 'state': state });
-  }
+  },
+  // Get all workerAnts with status
+  getWorkerAntsById: function(id) {
+    return _.where(this.workerAnts, { 'id': id });
+  },
 };
 
 // export the class
