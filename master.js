@@ -11,7 +11,7 @@ function AntHill(host, port) {
   this.port = port;
   this.workers = [];
   this.callbacks = {};
-  this.workerState = {
+  this.workerStates = {
     ERROR: 'ERROR',
     READY: 'READY',
     BUSY: 'BUSY'
@@ -31,20 +31,20 @@ AntHill.prototype = {
         switch(messageObj.state) {
           case 'READY':
             console.log('Worker state : READY');
-            worker.state = self.workerState.READY;
+            worker.state = self.workerStates.READY;
           break;
           case 'BUSY':
             console.log('Worker state : BUSY');
-            worker.state = self.workerState.BUSY;
+            worker.state = self.workerStates.BUSY;
           break;
           case 'COMPLETE':
             console.log('Worker state : COMPLETE');
-            worker.state = self.workerState.READY;
+            worker.state = self.workerStates.READY;
             self.callbacks[messageObj.jobId](null, messageObj);
           break;
           case 'ERROR':
             console.log('Worker state : ERROR');
-            worker.state = self.workerState.ERROR;
+            worker.state = self.workerStates.ERROR;
             self.callbacks[messageObj.jobId](messageObj.error, null);
           break;
         }
@@ -59,7 +59,7 @@ AntHill.prototype = {
   addWorker: function(socket) {
     var worker = {
       'id': this.workers.length + 1,
-      'state': this.workerState.READY,
+      'state': this.workerStates.READY,
       'socket': socket
     };
     this.workers.push(worker);
@@ -95,6 +95,7 @@ AntHill.prototype = {
   getWorkersByState: function(state) {
     return _.where(this.workers, { 'state': state });
   }
+
 };
 
 // export the class
