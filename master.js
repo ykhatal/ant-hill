@@ -9,7 +9,7 @@ var net = require('net'),
 function AntHill(host, port) {
   this.host = host;
   this.port = port;
-  this.workers = [];
+  this.workerAnts = [];
   this.callbacks = [];
   this.workerStates = {
     ERROR: 'ERROR',
@@ -22,7 +22,7 @@ AntHill.prototype = {
   // Create server and listen to port
   createServer: function() {
     var self = this;
-    console.log('Server listening on ' + this.host + ':' + this.port);
+    console.log('Server listening on ' + this.host + ':' + self.port);
     net.createServer(function(socket) {
       var worker = self.addWorker(socket);
       // Called on data received
@@ -58,17 +58,17 @@ AntHill.prototype = {
   // Add connected worker
   addWorker: function(socket) {
     var worker = {
-      'id': this.workers.length + 1,
+      'id': this.workerAnts.length + 1,
       'state': this.workerStates.READY,
       'socket': socket
     };
-    this.workers.push(worker);
+    this.workerAnts.push(worker);
     console.log('Worker ' + worker.id + ' connected');
     return worker;
   },
   // Remove disconnected worker
   removeWorker: function(socket) {
-    _.remove(this.workers, function(element) {
+    _.remove(this.workerAnts, function(element) {
       console.log('Worker ' + element.id + ' disconnected');
       return element.socket == socket;
     });
@@ -93,9 +93,9 @@ AntHill.prototype = {
       console.log('Job', job.id, 'failed', job.data.task);
     });
   },
-  // List all workers with status
-  getWorkersByState: function(state) {
-    return _.where(this.workers, { 'state': state });
+  // List all workerAnts with status
+  getworkerAntsByState: function(state) {
+    return _.where(this.workerAnts, { 'state': state });
   }
 
 };
