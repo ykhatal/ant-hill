@@ -93,11 +93,10 @@ AntHill.prototype = {
       console.log('Job', job.id, 'failed', job.data.task);
     });
   },
-  // List all workerAnts with status
-  getworkerAntsByState: function(state) {
+  // Get all workerAnts with status
+  getWorkerAntsByState: function(state) {
     return _.where(this.workerAnts, { 'state': state });
   }
-
 };
 
 // export the class
