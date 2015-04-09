@@ -14,7 +14,8 @@ function AntHill(host, port) {
   this.antStates = {
     ERROR: 'ERROR',
     READY: 'READY',
-    BUSY: 'BUSY'
+    BUSY: 'BUSY',
+    PAUSED: 'PAUSED'
   };
 }
 
