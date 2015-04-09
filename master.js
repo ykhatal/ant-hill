@@ -25,7 +25,7 @@ AntHill.prototype = {
     var self = this;
     console.log('Server listening on ' + this.host + ':' + this.port);
     net.createServer(function(socket) {
-      var workerAnt = self.addworkerAnt(socket);
+      var workerAnt = self.addWorkerAnt(socket);
       // Called on data received
       socket.on('data', function(message) {
         var messageObj = JSON.parse(message);
@@ -48,12 +48,12 @@ AntHill.prototype = {
       });
       // Called on workerAnt disconnection
       socket.on('close', function() {
-        self.removeworkerAnt(socket);
+        self.removeWorkerAnt(socket);
       });
     }).listen(this.port, this.host);
   },
   // Add connected workerAnt
-  addworkerAnt: function(socket) {
+  addWorkerAnt: function(socket) {
     var workerAnt = {
       'id': this.workerAnts.length + 1,
       'state': this.antStates.READY,
@@ -64,11 +64,19 @@ AntHill.prototype = {
     return workerAnt;
   },
   // Remove disconnected workerAnt
-  removeworkerAnt: function(socket) {
+  removeWorkerAnt: function(socket) {
     _.remove(this.workerAnts, function(workerAnt) {
       console.log('workerAnt ' + workerAnt.id + ' disconnected');
       return workerAnt.socket == socket;
     });
+  },
+  // Get all workerAnts with status
+  getWorkerAntsByState: function(state) {
+    return _.where(this.workerAnts, { 'state': state });
+  },
+  // Get all workerAnts with status
+  getWorkerAntsById: function(id) {
+    return _.where(this.workerAnts, { 'id': id });
   },
   // Add task to queue
   addTask: function(taskType, task, priority, delay, callback) {
@@ -90,14 +98,6 @@ AntHill.prototype = {
       console.log('task', task.id, 'failed', task.data.task);
       self.setTaskStatus(task, 'inactive');
     });
-  },
-  // Get all workerAnts with status
-  getWorkerAntsByState: function(state) {
-    return _.where(this.workerAnts, { 'state': state });
-  },
-  // Get all workerAnts with status
-  getWorkerAntsById: function(id) {
-    return _.where(this.workerAnts, { 'id': id });
   },
   // Set workerAnt state
   setWorkerAntState: function (workerAnt, state) {
