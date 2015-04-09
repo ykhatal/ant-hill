@@ -90,6 +90,10 @@ AntHill.prototype = {
     job.on('failed', function() {
       console.log('Job', job.id, 'failed', job.data.task);
     });
+  },
+  // List all workers with status
+  getWorkersByState: function(state) {
+    return _.where(this.workers, { 'state': state });
   }
 };
 
