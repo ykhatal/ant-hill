@@ -41,12 +41,12 @@ AntHill.prototype = {
           case 'COMPLETE':
             console.log('workerAnt state : COMPLETE');
             self.setWorkerAntState(workerAnt, self.antStates.READY);
-            _.where(self.callbacks, { 'jobId': parseInt(messageObj.jobId) })[0].callback(null, messageObj);
+            _.where(self.callbacks, { 'taskId': parseInt(messageObj.taskId) })[0].callback(null, messageObj);
           break;
           case 'ERROR':
             console.log('workerAnt state : ERROR');
             self.setWorkerAntState(workerAnt, self.antStates.ERROR);
-            _.where(self.callbacks, { 'jobId': parseInt(messageObj.jobId) })[0].callback(messageObj.error, null);
+            _.where(self.callbacks, { 'taskId': parseInt(messageObj.taskId) })[0].callback(messageObj.error, null);
           break;
         }
       });
@@ -77,21 +77,21 @@ AntHill.prototype = {
   // Add task to queue
   addTask: function(taskType, task, priority, delay, callback) {
     var self = this;
-    var job = tasksQueue.create(taskType, {
+    var task = tasksQueue.create(taskType, {
         'task': task
     }).attempts(0).priority(priority).delay(delay).save();
-    job.on('enqueue', function() {
-      console.log('Job', job.id, 'enqueued', job.data.task);
+    task.on('enqueue', function() {
+      console.log('task', task.id, 'enqueued', task.data.task);
       self.callbacks.push({
-        'jobId': job.id,
+        'taskId': task.id,
         'callback': callback
       });
     });
-    job.on('complete', function() {
-      console.log('Job', job.id, 'completed', job.data.task);
+    task.on('complete', function() {
+      console.log('task', task.id, 'completed', task.data.task);
     });
-    job.on('failed', function() {
-      console.log('Job', job.id, 'failed', job.data.task);
+    task.on('failed', function() {
+      console.log('task', task.id, 'failed', task.data.task);
     });
   },
   // Get all workerAnts with status
@@ -105,6 +105,13 @@ AntHill.prototype = {
   // Set workerAnt state
   setWorkerAntState: function (ant, state) {
     _.where(this.workerAnts, { 'id': ant.id }).state = state;
+  },
+  setTaskStatus: function(task, taskType, taskStatus) {
+    kue.Job.rangeByType (taskType, task.state, task.id, task.id, 'asc', function (err, selectedTasks) {
+      selectedTasks.forEach(function (task) {
+          task.state(taskStatus).save();
+      });
+    });
   }
 };
 
