@@ -31,20 +31,20 @@ AntHill.prototype = {
         switch(messageObj.state) {
           case 'READY':
             console.log('Worker state : READY');
-            worker.state = self.antStates.READY;
+            self.setWorkerAntState(worker, self.antStates.READY);
           break;
           case 'BUSY':
             console.log('Worker state : BUSY');
-            worker.state = self.antStates.BUSY;
+            self.setWorkerAntState(worker, self.antStates.BUSY);
           break;
           case 'COMPLETE':
             console.log('Worker state : COMPLETE');
-            worker.state = self.antStates.READY;
+            self.setWorkerAntState(worker, self.antStates.READY);
             _.where(self.callbacks, { 'jobId': parseInt(messageObj.jobId) })[0].callback(null, messageObj);
           break;
           case 'ERROR':
             console.log('Worker state : ERROR');
-            worker.state = self.antStates.ERROR;
+            self.setWorkerAntState(worker, self.antStates.ERROR);
             _.where(self.callbacks, { 'jobId': parseInt(messageObj.jobId) })[0].callback(messageObj.error, null);
           break;
         }
@@ -101,6 +101,10 @@ AntHill.prototype = {
   getWorkerAntsById: function(id) {
     return _.where(this.workerAnts, { 'id': id });
   },
+  // Set workerAnt state
+  setWorkerAntState: function (ant, state) {
+    _.where(this.workerAnts, { 'id': ant.id }).state = state;
+  }
 };
 
 // export the class
