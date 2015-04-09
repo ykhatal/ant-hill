@@ -23,7 +23,7 @@ AntHill.prototype = {
   // Create server and listen to port
   createServer: function() {
     var self = this;
-    console.log('Server listening on ' + this.host + ':' + self.port);
+    console.log('Server listening on ' + this.host + ':' + this.port);
     net.createServer(function(socket) {
       var workerAnt = self.addworkerAnt(socket);
       // Called on data received
