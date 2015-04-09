@@ -31,20 +31,16 @@ AntHill.prototype = {
         var messageObj = JSON.parse(message);
         switch(messageObj.state) {
           case 'READY':
-            console.log('workerAnt state : READY');
             self.setWorkerAntState(workerAnt, self.antStates.READY);
           break;
           case 'BUSY':
-            console.log('workerAnt state : BUSY');
             self.setWorkerAntState(workerAnt, self.antStates.BUSY);
           break;
           case 'COMPLETE':
-            console.log('workerAnt state : COMPLETE');
             self.setWorkerAntState(workerAnt, self.antStates.READY);
             _.where(self.callbacks, { 'taskId': parseInt(messageObj.taskId) })[0].callback(null, messageObj);
           break;
           case 'ERROR':
-            console.log('workerAnt state : ERROR');
             self.setWorkerAntState(workerAnt, self.antStates.ERROR);
             _.where(self.callbacks, { 'taskId': parseInt(messageObj.taskId) })[0].callback(messageObj.error, null);
           break;
@@ -104,7 +100,8 @@ AntHill.prototype = {
   },
   // Set workerAnt state
   setWorkerAntState: function (ant, state) {
-    _.where(this.workerAnts, { 'id': ant.id }).state = state;
+    _.where(this.workerAnts, { 'id': workerAnt.id })[0].state = state;
+    console.log('workerAnt state : ' + state);
   },
   setTaskStatus: function(task, taskType, taskStatus) {
     kue.Job.rangeByType (taskType, task.state, task.id, task.id, 'asc', function (err, selectedTasks) {
