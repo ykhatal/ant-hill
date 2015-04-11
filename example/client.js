@@ -10,6 +10,10 @@ cli.processQueue({
 	type: 'linkedin',
 	doTask: function(task) {
 		console.log('Doing task ' + task.id);
-		return JSON.stringify({ type: 'MESSAGE',state: "BUSY", data: "Worker BUSY." });
+		return JSON.stringify({
+			type: 'MESSAGE',
+			state: 'BUSY',
+			data: 'Worker BUSY.'
+		});
 	}
 });
