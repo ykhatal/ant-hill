@@ -6,9 +6,9 @@ var cli = new Ant('127.0.0.1', 6969);
 
 cli.connect();
 
-cli.processQueue({
+cli.doTask({
 	type: 'linkedin',
-	doTask: function(task) {
+	callback: function(task) {
 		console.log('Doing task ' + task.id);
 		return JSON.stringify({
 			type: 'MESSAGE',
