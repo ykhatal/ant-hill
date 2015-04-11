@@ -1,11 +1,11 @@
 'use strict';
 
 var AntHill = require('../lib/ant-hill'),
- 		kue = require('kue'),
- 		express = require('express'),
- 		ui = require('kue-ui'),
- 		app = express(),
- 		fs = require('fs');
+	kue = require('kue'),
+	express = require('express'),
+	ui = require('kue-ui'),
+	app = express(),
+	fs = require('fs');
 
 var server = new AntHill('127.0.0.1', 6969);
 server.createServer();
@@ -31,26 +31,30 @@ var data = [
 	{ company: 'nokia', keyword: 'sales' }
 ];
 
-for(var i = 0; i < data.length; ++i) {
+var success = function (result) {
+	console.log(result);
+};
+
+var error = function (err) {
+	console.log(err);
+};
+
+for (var i = 0; i < data.length; ++i) {
 	server.addTask({
 		type: 'linkedin',
 		data: data[i],
 		priority: 'normal',
 		delay: 0,
 		attempt: 3,
-		success: function (result) {
-			console.log(result);
-		},
-		error: function(err) {
-
-		}
+		success: success,
+		error: error
 	});
 }
 
 
 ui.setup({
-    apiURL: '/api', // IMPORTANT: specify the api url
-    baseURL: '/kue' // IMPORTANT: specify the base url
+  apiURL: '/api', // IMPORTANT: specify the api url
+  baseURL: '/kue' // IMPORTANT: specify the base url
 });
 
 // Mount kue JSON api
