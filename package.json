@@ -25,7 +25,8 @@
   "dependencies": {
     "lodash": "~3.6.0",
     "json-socket": "*",
-    "kue": "~0.8.12"
+    "kue": "~0.8.12",
+    "winston": "*"
   },
   "devDependencies": {
     "express": "^4.12.3",
