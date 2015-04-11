@@ -7,15 +7,17 @@
   },
   "version": "0.1.0",
   "private": true,
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/ky23/ant-hill.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ky23/ant-hill.git"
   },
-  "bugs" : {
-    "url" : "https://github.com/ky23/ant-hill/issues"
+  "bugs": {
+    "url": "https://github.com/ky23/ant-hill/issues"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "start-server": "node ./example/server.js",
+    "start-client": "node ./example/client.js"
   },
   "engines": {
     "node": "0.10.x"
@@ -24,7 +26,9 @@
     "lodash": "~3.6.0",
     "json-socket": "*",
     "kue": "~0.8.12"
+  },
+  "devDependencies": {
+    "express": "^4.12.3",
+    "kue-ui": "^0.1.0"
   }
 }
-
-
