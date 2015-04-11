@@ -1,5 +1,5 @@
 {
-  "name": "AntHill",
+  "name": "ant-hill",
   "description": "An easy way to send JSON over TCP using sockets.",
   "author": {
     "name": "Yacine Khatal",
