@@ -8,12 +8,8 @@ cli.connect();
 
 cli.doTask({
 	type: 'linkedin',
-	callback: function(task) {
+	callback: function(task, done) {
 		console.log('Doing task ' + task.id);
-		return JSON.stringify({
-			type: 'MESSAGE',
-			state: 'BUSY',
-			data: 'Worker BUSY.'
-		});
+		done(JSON.stringify('Result'));
 	}
 });
