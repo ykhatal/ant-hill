@@ -1,14 +1,15 @@
 'use strict';
 
-var AntHill = require('../lib/ant-hill'),
+var AntHill = require('../index'),
 	kue = require('kue'),
 	express = require('express'),
 	ui = require('kue-ui'),
 	app = express(),
 	fs = require('fs');
 
-var server = new AntHill('127.0.0.1', 6969);
+var server = new AntHill.QueenAnt('127.0.0.1', 6969);
 server.createServer();
+server.createQueue();
 
 
 var data = [
