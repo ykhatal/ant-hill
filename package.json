@@ -11,6 +11,16 @@
     "type": "git",
     "url": "https://github.com/ky23/ant-hill.git"
   },
+  "contributors": [
+    {
+      "name": "Yacine Khatal",
+      "email": "khatal.yacine@gmail.com"
+    },
+    {
+      "name": "James Heng",
+      "email": "heng_j@epitech.eu"
+    }
+  ],
   "bugs": {
     "url": "https://github.com/ky23/ant-hill/issues"
   },
