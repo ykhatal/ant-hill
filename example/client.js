@@ -11,6 +11,8 @@ client.doTask({
 	type: 'linkedin',
 	callback: function(task, done) {
 		console.log('Doing task ' + task.id);
-		done(JSON.stringify('Result'));
+		setTimeout(function() {
+			done(JSON.stringify('Result'));
+		}, 5000);
 	}
 });
