@@ -1,16 +1,12 @@
 'use strict';
 
 var AntHill = require('../index'),
-	kue = require('kue'),
-	express = require('express'),
-	ui = require('kue-ui'),
-	app = express(),
 	fs = require('fs');
 
-var server = new AntHill.QueenAnt('127.0.0.1', 6969);
-server.createServer();
-server.createQueue();
+var queenAnt = new AntHill.QueenAnt('127.0.0.1', 6969);
 
+queenAnt.createServer();
+queenAnt.createQueue();
 
 var data = [
 	{ company: 'amazon', keyword: 'sales' },
@@ -23,44 +19,31 @@ var data = [
 	{ company: 'linkedin', keyword: 'sales' },
 	{ company: 'twitter', keyword: 'sales' },
 	{ company: 'asus', keyword: 'sales' },
-	{ company: 'samsung', keyword: 'sales' },
-	{ company: 'hp', keyword: 'sales' },
-	{ company: 'sony', keyword: 'sales' },
-	{ company: 'apple', keyword: 'sales' },
-	{ company: 'htc', keyword: 'sales' },
-	{ company: 'jvc', keyword: 'sales' },
-	{ company: 'nokia', keyword: 'sales' }
 ];
 
-var success = function (result) {
-	console.log(result);
-};
-
-var error = function (err) {
-	console.log(err);
-};
-
 for (var i = 0; i < data.length; ++i) {
-	server.addTask({
-		type: 'linkedin',
+	queenAnt.addTask({
+		type: 'Task-Type',
 		data: data[i],
 		priority: 'normal',
 		delay: 0,
-		attempt: 3,
-		success: success,
-		error: error
+		attempt: 3
 	});
 }
 
+queenAnt.onTaskComplete([
+	{
+		taskType: 'Task-Type',
+		success: function(result, done) {
+			console.log('Result : ' + result);
+			done();
+		},
+		error: function(err, done) {
+			console.log('Error : ' + err);
+			done();
+		},
+	}
+]);
 
-ui.setup({
-  apiURL: '/api', // IMPORTANT: specify the api url
-  baseURL: '/kue' // IMPORTANT: specify the base url
+queenAnt.onShutdown(function(){
 });
-
-// Mount kue JSON api
-app.use('/api', kue.app);
-// Mount UI
-app.use('/kue', ui.app);
-
-app.listen(3000);

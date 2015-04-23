@@ -2,17 +2,19 @@
 
 var Ant = require('../index');
 
-var client = new Ant.WorkerAnt('127.0.0.1', 6969);
+var workerAnt = new Ant.WorkerAnt('127.0.0.1', 6969);
 
-client.connect();
-client.createQueue();
+workerAnt.connect();
+workerAnt.createQueue();
 
-client.doTask({
-	type: 'linkedin',
+workerAnt.doTask({
+	type: 'Task-Type',
 	callback: function(task, done) {
-		console.log('Doing task ' + task.id);
 		setTimeout(function() {
-			done(JSON.stringify('Result'));
+			done(JSON.stringify('ResultObject'));
 		}, 5000);
 	}
+});
+
+workerAnt.onShutdown(function(){
 });
