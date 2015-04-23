@@ -33,6 +33,7 @@
     "node": "0.10.x"
   },
   "dependencies": {
+    "colors": "^1.0.3",
     "eval": "^0.1.0",
     "json-socket": "*",
     "kue": "~0.8.12",
