@@ -11,7 +11,7 @@ workerAnt.doTask({
 	type: 'Task-Type',
 	callback: function(task, done) {
 		setTimeout(function() {
-			done(JSON.stringify('ResultObject'));
+			done(null, 'ResultObject');
 		}, 5000);
 	}
 });
