@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "colors": "^1.0.3",
-    "eval": "^0.1.0",
     "json-socket": "*",
     "kue": "~0.8.12",
     "lodash": "~3.6.0",
