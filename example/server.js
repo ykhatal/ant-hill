@@ -34,16 +34,20 @@ for (var i = 0; i < data.length; ++i) {
 queenAnt.onTaskComplete([
 	{
 		taskType: 'Task-Type',
-		success: function(result, done) {
-			console.log('Result : ' + result);
+		success: function(result, taskId, done) {
+			console.log('Task[' + taskId + '] successed with result : ' + result);
 			done();
 		},
-		error: function(err, done) {
-			console.log('Error : ' + err);
+		error: function(err, taskId, done) {
+			console.log('Task[' + taskId + '] failed with error : ' + err);
 			done();
 		},
 	}
 ]);
+
+queenAnt.onTaskProccess(function(taskId) {
+	console.log('Task[' + taskId + '] in progress');
+});
 
 queenAnt.onShutdown(function(){
 });
