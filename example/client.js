@@ -15,6 +15,3 @@ workerAnt.doTask({
 		}, 5000);
 	}
 });
-
-workerAnt.onShutdown(function(){
-});
