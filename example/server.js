@@ -45,7 +45,7 @@ queenAnt.onTaskComplete([
 	}
 ]);
 
-queenAnt.onTaskProccess(function(taskId) {
+queenAnt.onTaskProcess(function(taskId) {
 	console.log('Task[' + taskId + '] in progress');
 });
 
