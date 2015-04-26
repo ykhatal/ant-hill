@@ -2,7 +2,7 @@
 
 var Ant = require('../index');
 
-var workerAnt = new Ant.WorkerAnt('127.0.0.1', 6969);
+var workerAnt = new Ant.WorkerAnt('127.0.0.1', 6969, 1000);
 
 workerAnt.connect();
 workerAnt.createQueue();
