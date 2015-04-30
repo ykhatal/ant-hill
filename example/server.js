@@ -31,7 +31,7 @@ for (var i = 0; i < data.length; ++i) {
 	});
 }
 
-queenAnt.onTaskComplete([
+queenAnt.onTaskCompleted([
 	{
 		taskType: 'Task-Type',
 		success: function(result, taskId, done) {
@@ -45,6 +45,6 @@ queenAnt.onTaskComplete([
 	}
 ]);
 
-queenAnt.onTaskProcess(function(taskId) {
+queenAnt.onTaskProcessed(function(taskId) {
 	console.log('Task[' + taskId + '] in progress');
 });
